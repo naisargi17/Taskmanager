@@ -9,6 +9,7 @@ import Button from "./Button";
 import {toast} from "sonner";
 import { useRegisterMutation } from "../redux/slices/authApiSlice"; 
 import { useUpdateUserMutation } from "../redux/slices/userApiSlice";
+import { setCredentials } from "../redux/slices/authSlice";
 
 const AddUser = ({ open, setOpen, userData }) => {
   let defaultValues = userData ?? {};
@@ -26,10 +27,12 @@ const AddUser = ({ open, setOpen, userData }) => {
 
     try{if(userData){
       const response = await updateUser(data).unwrap();
-      toast.success("profile updated successfully !!")
-      if(userData?._id === user?._id){
-        dispatch(setCredentials({...result.user}));
-      }
+    toast.success("Profile updated successfully!");
+
+    // Ensure `userData` and `user` exist before accessing their properties
+    if (userData?._id === user?._id) {
+      dispatch(setCredentials({ ...response.user })); // Fixed destructuring issue
+    }
     }else{
     await addNewUSer({...data,password:data.email}).unwrap();
 
